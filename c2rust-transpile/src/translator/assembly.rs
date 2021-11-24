@@ -27,7 +27,7 @@ impl<'c> Translation<'c> {
             ));
         }
 
-        self.use_feature("asm");
+        self.use_feature("llvm_asm");
 
         fn push_expr(tokens: &mut Vec<TokenTree>, expr: P<Expr>) {
             tokens.push(TokenTree::token(token::Interpolated(Rc::new(Nonterminal::NtExpr(expr))), DUMMY_SP));
@@ -181,7 +181,7 @@ impl<'c> Translation<'c> {
         }
 
         let mac = mk().mac(
-            vec!["asm"],
+            vec!["llvm_asm"],
             tokens.into_iter().collect::<TokenStream>(),
             MacDelimiter::Parenthesis,
         );

@@ -128,7 +128,7 @@ impl<'c> Translation<'c> {
                                         is_noreturn, _) = resolved_ctype.kind {
                         // ty is a function pointer type -> build Rust unsafe function pointer type
                         let opt_ret = if is_noreturn { None } else { Some(ret) };
-                        
+
                         let fn_ty = self.type_converter
                             .borrow_mut()
                             .convert_function(&self.ast_context, opt_ret, params, is_variadic)?;
@@ -166,7 +166,6 @@ impl<'c> Translation<'c> {
                 } else {
                     let val = if have_fn_ptr {
                         // transmute result of call to `arg` when expecting a function pointer
-                        if ctx.is_const { self.use_feature("const_transmute"); }
                         transmute_expr(mk().infer_ty(), mk().infer_ty(), val, self.tcfg.emit_no_std)
                     } else {
                         val

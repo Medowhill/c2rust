@@ -223,7 +223,6 @@ impl<'c> Translation<'c> {
                 .is_enum();
             let result_type = self.convert_type(lhs_ty.ctype)?;
             let val = if is_enum_result {
-                if ctx.is_const { self.use_feature("const_transmute"); }
                 WithStmts::new_unsafe_val(transmute_expr(lhs_type, result_type, val, self.tcfg.emit_no_std))
             } else {
                 // We can't as-cast from a non primitive like f128 back to the result_type
@@ -410,7 +409,6 @@ impl<'c> Translation<'c> {
                             let result_type = self.convert_type(qtype.ctype)?;
                             let val = if is_enum_result {
                                 is_unsafe = true;
-                                if ctx.is_const { self.use_feature("const_transmute"); }
                                 transmute_expr(lhs_type, result_type, val, self.tcfg.emit_no_std)
                             } else {
                                 mk().cast_expr(val, result_type)
@@ -738,12 +736,10 @@ impl<'c> Translation<'c> {
                     "Cannot use wrapping offset from in a const expression",
                 ));
             }
-            // The wrapping_offset_from method is locked behind a feature gate
-            // and replaces the now deprecated offset_to (opposite argument order)
-            // wrapping_offset_from panics when the pointee is a ZST
-            self.use_feature("ptr_wrapping_offset_from");
 
-            let mut offset = mk().method_call_expr(lhs, "wrapping_offset_from", vec![rhs]);
+            let lhs = mk().cast_expr(lhs, mk().path_ty(vec!["usize"]));
+            let rhs = mk().cast_expr(rhs, mk().path_ty(vec!["usize"]));
+            let mut offset = mk().binary_expr(BinOpKind::Sub, lhs, rhs);
 
             if let Some(sz) = self.compute_size_of_expr(pointee.ctype) {
                 let div = cast_int(sz, "isize", false);
