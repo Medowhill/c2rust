@@ -402,13 +402,7 @@ pub fn stmts_block(mut stmts: Vec<Stmt>) -> P<Block> {
 // Generate link attributes needed to ensure that the generated Rust libraries have the right symbol
 // values.
 fn mk_linkage(in_extern_block: bool, new_name: &str, old_name: &str) -> Builder {
-    if new_name == old_name {
-        mk().single_attr("no_mangle") // Don't touch my name Rust!
-    } else if in_extern_block {
-        mk().str_attr("link_name", old_name) // Look for this name
-    } else {
-        mk().str_attr("export_name", old_name) // Make sure you actually name it this
-    }
+    mk()
 }
 
 pub fn signed_int_expr(value: i64) -> P<Expr> {
