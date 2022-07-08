@@ -359,11 +359,8 @@ impl<'c> Translation<'c> {
                 // Assignment expression itself
                 let assign_stmt = match op {
                     // Regular (possibly volatile) assignment
-                    c_ast::BinOp::Assign if !is_volatile => {
-                        WithStmts::new_val(mk().assign_expr(&write, rhs))
-                    }
                     c_ast::BinOp::Assign => {
-                        WithStmts::new_val(self.volatile_write(&write, initial_lhs_type_id, rhs)?)
+                        WithStmts::new_val(mk().assign_expr(&write, rhs))
                     }
 
                     // Anything volatile needs to be desugared into explicit reads and writes
@@ -416,11 +413,7 @@ impl<'c> Translation<'c> {
                             mk().cast_expr(val, write_type)
                         };
 
-                        let write = if is_volatile {
-                            self.volatile_write(&write, initial_lhs_type_id, val)?
-                        } else {
-                            mk().assign_expr(write, val)
-                        };
+                        let write = mk().assign_expr(write, val);
                         if is_unsafe {
                             WithStmts::new_unsafe_val(write)
                         } else {
@@ -881,11 +874,7 @@ impl<'c> Translation<'c> {
                     };
 
                 // *p = *p + rhs
-                let assign_stmt = if ty.qualifiers.is_volatile {
-                    self.volatile_write(&write, ty, val)?
-                } else {
-                    mk().assign_expr(&write, val)
-                };
+                let assign_stmt = mk().assign_expr(&write, val);
 
                 Ok(WithStmts::new(
                     vec![save_old_val, mk().expr_stmt(assign_stmt)],
