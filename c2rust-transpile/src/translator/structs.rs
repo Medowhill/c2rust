@@ -111,7 +111,7 @@ impl<'a> Translation<'a> {
                 let is_va_list = self.ast_context.is_va_list(ctype);
                 let mut ty = if is_va_list {
                     let path = vec![
-                        mk().path_segment("core"),
+                        mk().path_segment("std"),
                         mk().path_segment("ffi"),
                         mk().path_segment_with_args(
                             "VaListImpl",

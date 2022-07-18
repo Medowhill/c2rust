@@ -94,7 +94,7 @@ impl<'c> Translation<'c> {
                     mk().path_expr(vec!["args"]),
                     "push",
                     vec![mk().call_expr(
-                        mk().abs_path_expr(vec!["core", "ptr", "null_mut"]),
+                        mk().abs_path_expr(vec!["std", "ptr", "null_mut"]),
                         vec![] as Vec<Box<Expr>>,
                     )],
                 )));
@@ -210,7 +210,7 @@ impl<'c> Translation<'c> {
                     mk().path_expr(vec!["vars"]),
                     "push",
                     vec![mk().call_expr(
-                        mk().abs_path_expr(vec!["core", "ptr", "null_mut"]),
+                        mk().abs_path_expr(vec!["std", "ptr", "null_mut"]),
                         vec![] as Vec<Box<Expr>>,
                     )],
                 )));

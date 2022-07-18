@@ -353,7 +353,7 @@ fn transmute_expr(source_ty: Box<Type>, target_ty: Box<Type>, expr: Box<Expr>) -
         (Type::Infer(_), Type::Infer(_)) => Vec::new(),
         _ => vec![source_ty, target_ty],
     };
-    let mut path = vec![mk().path_segment("core"), mk().path_segment("mem")];
+    let mut path = vec![mk().path_segment("std"), mk().path_segment("mem")];
 
     if type_args.is_empty() {
         path.push(mk().path_segment("transmute"));
@@ -387,17 +387,7 @@ pub fn stmts_block(mut stmts: Vec<Stmt>) -> Box<Block> {
 
 /// Generate link attributes needed to ensure that the generated Rust libraries have the right symbol values.
 fn mk_linkage(in_extern_block: bool, new_name: &str, old_name: &str) -> Builder {
-    if new_name == old_name {
-        if in_extern_block {
-            mk() // There is no mangling by default in extern blocks anymore
-        } else {
-            mk().single_attr("no_mangle") // Don't touch my name Rust!
-        }
-    } else if in_extern_block {
-        mk().str_attr("link_name", old_name) // Look for this name
-    } else {
-        mk().str_attr("export_name", old_name) // Make sure you actually name it this
-    }
+    mk()
 }
 
 pub fn signed_int_expr(value: i64) -> Box<Expr> {
@@ -1309,6 +1299,7 @@ impl<'c> Translation<'c> {
         )];
 
         features.push("register_tool");
+        features.push("rustc_private");
         pragmas.push(("register_tool", vec!["c2rust"]));
 
         if !features.is_empty() {
@@ -2723,7 +2714,7 @@ impl<'c> Translation<'c> {
                     // translate `va_list` variables to `VaListImpl`s and omit the initializer.
                     let pat_mut = mk().set_mutbl("mut").ident_pat(rust_name);
                     let ty = {
-                        let path = vec!["core", "ffi", "VaListImpl"];
+                        let path = vec!["std", "ffi", "VaListImpl"];
                         mk().path_ty(mk().abs_path(path))
                     };
                     let local_mut = mk().local::<_, _, Box<Expr>>(pat_mut, Some(ty), None);
@@ -3040,7 +3031,7 @@ impl<'c> Translation<'c> {
         let addr_lhs = self.addr_lhs(lhs, lhs_type, true)?;
 
         Ok(mk().call_expr(
-            mk().abs_path_expr(vec!["core", "ptr", "write_volatile"]),
+            mk().abs_path_expr(vec!["std", "ptr", "write_volatile"]),
             vec![addr_lhs, rhs],
         ))
     }
@@ -3057,7 +3048,7 @@ impl<'c> Translation<'c> {
         // in order to avoid omitted bit-casts to const from causing the
         // wrong type to be inferred via the result of the pointer.
         let mut path_parts: Vec<PathSegment> = vec![];
-        for elt in ["core", "ptr"] {
+        for elt in ["std", "ptr"] {
             path_parts.push(mk().path_segment(elt))
         }
         let elt_ty = self.convert_type(lhs_type.ctype)?;
@@ -3174,7 +3165,7 @@ impl<'c> Translation<'c> {
         let name = "size_of";
         let params = mk().angle_bracketed_args(vec![ty]);
         let path = vec![
-            mk().path_segment("core"),
+            mk().path_segment("std"),
             mk().path_segment("mem"),
             mk().path_segment_with_args(name, params),
         ];
@@ -3192,7 +3183,7 @@ impl<'c> Translation<'c> {
 
         let ty = self.convert_type(type_id)?;
         let tys = vec![ty];
-        let mut path = vec![mk().path_segment("core")];
+        let mut path = vec![mk().path_segment("std")];
         if preferred {
             self.use_feature("core_intrinsics");
             path.push(mk().path_segment("intrinsics"));
@@ -4577,7 +4568,7 @@ impl<'c> Translation<'c> {
 
         if self.ast_context.is_va_list(resolved_ty_id) {
             // generate MaybeUninit::uninit().assume_init()
-            let path = vec!["core", "mem", "MaybeUninit", "uninit"];
+            let path = vec!["std", "mem", "MaybeUninit", "uninit"];
             let call = mk().call_expr(mk().abs_path_expr(path), vec![] as Vec<Box<Expr>>);
             let call = mk().method_call_expr(call, "assume_init", vec![] as Vec<Box<Expr>>);
             return Ok(WithStmts::new_val(call));

@@ -69,7 +69,7 @@ static SIMD_X86_64_ONLY: &[&str] = &[
 
 fn add_arch_use(store: &mut ItemStore, arch_name: &str, item_name: &str) {
     store.add_use_with_attr(
-        vec!["core".into(), "arch".into(), arch_name.into()],
+        vec!["std".into(), "arch".into(), arch_name.into()],
         item_name,
         mk().meta_item_attr(
             AttrStyle::Outer,
