@@ -1298,6 +1298,7 @@ impl<'c> Translation<'c> {
             ],
         )];
 
+        features.push("untagged_unions");
         features.push("register_tool");
         features.push("rustc_private");
         pragmas.push(("register_tool", vec!["c2rust"]));
