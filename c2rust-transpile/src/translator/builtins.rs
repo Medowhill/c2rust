@@ -512,18 +512,18 @@ impl<'c> Translation<'c> {
             | "__sync_nand_and_fetch_8"
             | "__sync_nand_and_fetch_16" => {
                 let func_name = if builtin_name.contains("_add_") {
-                    "atomic_xadd"
+                    "atomic_xadd_seqcst"
                 } else if builtin_name.contains("_sub_") {
-                    "atomic_xsub"
+                    "atomic_xsub_seqcst"
                 } else if builtin_name.contains("_or_") {
-                    "atomic_or"
+                    "atomic_or_seqcst"
                 } else if builtin_name.contains("_xor_") {
-                    "atomic_xor"
+                    "atomic_xor_seqcst"
                 } else if builtin_name.contains("_nand_") {
-                    "atomic_nand"
+                    "atomic_nand_seqcst"
                 } else {
                     // We can't explicitly check for "_and_" since they all contain it
-                    "atomic_and"
+                    "atomic_and_seqcst"
                 };
 
                 let arg0 = self.convert_expr(ctx.used(), args[0])?;
@@ -556,7 +556,7 @@ impl<'c> Translation<'c> {
                 self.use_feature("core_intrinsics");
 
                 // Emit `atomic_xchg_acq(arg0, arg1)`
-                let atomic_func = mk().abs_path_expr(vec!["std", "intrinsics", "atomic_xchg_acq"]);
+                let atomic_func = mk().abs_path_expr(vec!["std", "intrinsics", "atomic_xchg_acquire"]);
                 let arg0 = self.convert_expr(ctx.used(), args[0])?;
                 let arg1 = self.convert_expr(ctx.used(), args[1])?;
                 arg0.and_then(|arg0| {

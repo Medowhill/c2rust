@@ -79,9 +79,9 @@ impl<'c> Translation<'c> {
             "__atomic_load" | "__atomic_load_n" => ptr.and_then(|ptr| {
                 use Ordering::*;
                 let intrinsic_name = match static_order(order) {
-                    SeqCst => Some("atomic_load"),
+                    SeqCst => Some("atomic_load_seqcst"),
                     AcqRel => None,
-                    Acquire => Some("atomic_load_acq"),
+                    Acquire => Some("atomic_load_acquire"),
                     Release => None,
                     Relaxed => Some("atomic_load_relaxed"),
                     _ => unreachable!("Did we not handle a case above??"),
@@ -322,10 +322,10 @@ impl<'c> Translation<'c> {
 
                 use Ordering::*;
                 let intrinsic_suffix = match static_order(order) {
-                    SeqCst => "",
+                    SeqCst => "_seqcst",
                     AcqRel => "_acqrel",
-                    Acquire => "_acq",
-                    Release => "_rel",
+                    Acquire => "_acquire",
+                    Release => "_release",
                     Relaxed => "_relaxed",
                     _ => unreachable!("Unknown memory ordering"),
                 };
