@@ -3250,7 +3250,7 @@ impl<'c> Translation<'c> {
         }
 
         use CExprKind::*;
-        match *expr_kind {
+        let res = match *expr_kind {
             DesignatedInitExpr(..) => {
                 Err(TranslationError::generic("Unexpected designated init expr"))
             }
@@ -3958,6 +3958,28 @@ impl<'c> Translation<'c> {
                     weak_id: weak,
                 },
             ),
+        };
+        if let Some(l) = src_loc {
+            if let Ok(res) = res {
+                let res = res.map(|mut v| {
+                    match v.as_mut() {
+                        Expr::Path(ExprPath{ attrs, .. }) => {
+                            let loc_str = format!("L{}", l.begin_line);
+                            let meta = mk().meta_path(loc_str.as_str());
+                            let prepared = mk().prepare_meta(meta);
+                            let attr = mk().attribute(AttrStyle::Outer, prepared.path, prepared.tokens);
+                            attrs.push(attr);
+                        }
+                        _ => (),
+                    }
+                    v
+                });
+                Ok(res)
+            } else {
+                res
+            }
+        } else {
+            res
         }
     }
 
