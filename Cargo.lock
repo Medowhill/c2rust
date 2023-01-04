@@ -1501,7 +1501,7 @@ checksum = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
 [[package]]
 name = "prettyplease"
 version = "0.1.9"
-source = "git+https://github.com/Medowhill/prettyplease?rev=043255e#043255ede77907149e62798326900349abb2e50e"
+source = "git+https://github.com/Medowhill/prettyplease?rev=6e1afe5#6e1afe51ac62008bfd7a98690147652ec15b7744"
 dependencies = [
  "proc-macro2",
  "syn",
