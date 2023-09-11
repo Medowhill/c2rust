@@ -996,7 +996,7 @@ impl<'c> Translation<'c> {
         }
 
         self.with_cur_file_item_store(|item_store| {
-            item_store.add_use(vec!["core".into(), "arch".into()], "asm");
+            item_store.add_use(vec!["std".into(), "arch".into()], "asm");
         });
 
         let mac = mk().mac(
