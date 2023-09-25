@@ -342,8 +342,7 @@ fn pointer_offset(
 /// Given an expression with type Option<fn(...)->...>, unwrap
 /// the Option and return the function.
 fn unwrap_function_pointer(ptr: Box<Expr>) -> Box<Expr> {
-    let err_msg = mk().lit_expr("non-null function pointer");
-    mk().method_call_expr(ptr, "expect", vec![err_msg])
+    mk().method_call_expr(ptr, "unwrap", vec![])
 }
 
 fn transmute_expr(source_ty: Box<Type>, target_ty: Box<Type>, expr: Box<Expr>) -> Box<Expr> {

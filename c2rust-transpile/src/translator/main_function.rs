@@ -76,8 +76,8 @@ impl<'c> Translation<'c> {
                                     mk().abs_path_expr(vec!["std", "ffi", "CString", "new"]),
                                     vec![mk().path_expr(vec!["arg"])],
                                 ),
-                                "expect",
-                                vec![mk().lit_expr("Failed to convert argument into CString.")],
+                                "unwrap",
+                                vec![],
                             ),
                             "into_raw",
                             vec![],
@@ -183,10 +183,8 @@ impl<'c> Translation<'c> {
                                         ]),
                                         vec![mk().path_expr(vec!["var"])],
                                     ),
-                                    "expect",
-                                    vec![mk().lit_expr(
-                                    "Failed to convert environment variable into CString."
-                                )],
+                                    "unwrap",
+                                    vec![],
                                 ),
                                 "into_raw",
                                 vec![],
