@@ -387,9 +387,9 @@ pub fn stmts_block(mut stmts: Vec<Stmt>) -> Block {
 fn mk_linkage(in_extern_block: bool, new_name: &str, old_name: &str) -> Builder {
     if new_name == old_name {
         if in_extern_block {
-            mk() // There is no mangling by default in extern blocks anymore
+            mk()
         } else {
-            mk().single_attr("no_mangle") // Don't touch my name Rust!
+            mk()
         }
     } else if in_extern_block {
         mk().str_attr("link_name", old_name) // Look for this name
