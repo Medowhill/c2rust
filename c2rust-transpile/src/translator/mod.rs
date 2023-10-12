@@ -1309,11 +1309,9 @@ impl<'c> Translation<'c> {
         self.panic_or_err_helper(msg, true)
     }
 
-    fn panic_or_err_helper(&self, msg: &str, panic: bool) -> Box<Expr> {
+    fn panic_or_err_helper(&self, _msg: &str, panic: bool) -> Box<Expr> {
         let macro_name = if panic { "panic" } else { "compile_error" };
-        let macro_msg = vec![TokenTree::Literal(proc_macro2::Literal::string(msg))]
-            .into_iter()
-            .collect::<TokenStream>();
+        let macro_msg = vec![];
         mk().mac_expr(mk().mac(
             mk().path(vec![macro_name]),
             macro_msg,
