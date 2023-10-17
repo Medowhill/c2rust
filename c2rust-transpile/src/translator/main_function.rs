@@ -40,7 +40,7 @@ impl<'c> Translation<'c> {
             let main_fn = mk().path_expr(vec![main_fn_name]);
 
             let exit_fn = mk().abs_path_expr(vec!["std", "process", "exit"]);
-            let args_fn = mk().abs_path_expr(vec!["std", "env", "args"]);
+            let args_fn = mk().abs_path_expr(vec!["std", "env", "args_os"]);
             let vars_fn = mk().abs_path_expr(vec!["std", "env", "vars"]);
 
             let no_args: Vec<Box<Expr>> = vec![];
@@ -74,7 +74,20 @@ impl<'c> Translation<'c> {
                                 mk().call_expr(
                                     // TODO(kkysen) change `"std"` to `"alloc"` after `#![feature(alloc_c_string)]` is stabilized in `1.63.0`
                                     mk().abs_path_expr(vec!["std", "ffi", "CString", "new"]),
-                                    vec![mk().path_expr(vec!["arg"])],
+                                    vec![
+                                        mk().call_expr(
+                                            mk().abs_path_expr(
+                                                vec!["std", "os", "unix", "ffi", "OsStrExt", "as_bytes"]
+                                            ),
+                                            vec![
+                                                mk().method_call_expr(
+                                                    mk().path_expr(vec!["arg"]),
+                                                    "as_os_str",
+                                                    vec![],
+                                                ),
+                                            ],
+                                        ),
+                                    ],
                                 ),
                                 "unwrap",
                                 vec![],
