@@ -352,7 +352,15 @@ impl<'c> Translation<'c> {
                             None,
                             Some(vec_expr(zero_elem, cast_int(count, "usize", false))),
                         )))],
-                        mk().method_call_expr(mk().ident_expr(&alloca_name), "as_mut_ptr", vec![]),
+                        mk().method_call_expr(
+                            mk().method_call_expr(
+                                mk().ident_expr(&alloca_name),
+                                "leak",
+                                vec![]
+                            ),
+                            "as_mut_ptr",
+                            vec![]
+                        ),
                     ))
                 })
             }
